@@ -11,7 +11,15 @@ interface FormData {
   id: string;
 }
 
-export default function Home() {
+interface Notes{
+  notes:{
+    id: string,
+    title: string,
+    description: string
+  }[]
+}
+
+export default function Home({notes}:Notes) {
   const [form, setForm] = useState<FormData>({
     title: "",
     description: "",
@@ -68,6 +76,15 @@ export default function Home() {
           Save
         </button>
       </form>
+      <div>
+        {notes.map(note =>{
+          return(
+            <div key={note.id}>
+              {note.title}
+            </div>
+          )
+        })}
+      </div>
     </main>
   );
 }
