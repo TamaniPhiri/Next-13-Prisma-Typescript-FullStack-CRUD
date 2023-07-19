@@ -1,5 +1,7 @@
+import { GetServerSideProps } from "next";
 import { Epilogue } from "next/font/google";
 import { useState } from "react";
+import { prisma } from "@/lib/prisma";
 
 const inter = Epilogue({ subsets: ["latin"] });
 
@@ -68,4 +70,19 @@ export default function Home() {
       </form>
     </main>
   );
+}
+
+export const getServerSideProps:GetServerSideProps=async()=>{
+  const notes=await prisma?.notes.findMany({
+    select:{
+      title:true,
+      id:true,
+      description:true
+    }
+  })
+  return{
+    props:{
+      notes
+    }
+  }
 }
