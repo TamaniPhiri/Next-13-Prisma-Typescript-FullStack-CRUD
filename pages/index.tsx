@@ -60,7 +60,7 @@ export default function Home({notes}:Notes) {
     <main
       className={`${inter.className} flex w-full gap-3 flex-col px-4 md:px-10 justify-center items-center min-h-screen`}
     >
-      <div>CRUD</div>
+      <div>Notes</div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
