@@ -9,6 +9,7 @@ export default async function handler(req: NextApiRequest,res: NextApiResponse){
                 id: Number(noteId)
             }
         })
+        res.json(note);
     }
     else{
         console.log("Note could not be created")
