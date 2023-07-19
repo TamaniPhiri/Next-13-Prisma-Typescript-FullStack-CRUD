@@ -85,14 +85,14 @@ export default function Home({notes}:Notes) {
           Save
         </button>
       </form>
-      <div className="flex flex-col gap-3 items-center">
+      <div className="flex flex-col w-72 pt-5 gap-2 items-center">
         {notes.map(note =>{
           return(
-            <div key={note.id} className="flex bg-slate-700 flex-col gap-2 items-center">
-              <span>
+            <div key={note.id} className="flex w-full border-b flex-col gap-2">
+              <span className="font-bold">
               {note.title}
               </span>
-              <p>
+              <p className="font-bold text-gray-400">
                 {note.description}
               </p>
             </div>
