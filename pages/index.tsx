@@ -23,6 +23,7 @@ interface Notes {
 export default function Home({ notes }: Notes) {
   const router = useRouter();
   const [error, setError] = useState("");
+  const[selected,setSelected]=useState(false);
   const [form, setForm] = useState<FormData>({
     title: "",
     description: "",
@@ -47,8 +48,10 @@ export default function Home({ notes }: Notes) {
       }).then(() => {
         if (data.id) {
           deleteNote(data.id);
+          setSelected(true)
           setForm({ title: "", description: "", id: "" });
           refreshData();
+          setSelected(false)
         } else {
           setForm({ title: "", description: "", id: "" });
           refreshData();
@@ -56,10 +59,12 @@ export default function Home({ notes }: Notes) {
       });
     } catch (error) {
       console.log(error);
+      setSelected(false)
     }
   }
 
   async function deleteNote(id: string) {
+    setSelected(false)
     try {
       fetch(`http://localhost:3000/api/note/${id}`, {
         headers: { "Content-Type": "application/json" },
@@ -72,26 +77,24 @@ export default function Home({ notes }: Notes) {
       console.log(error);
     }
   }
-  async function updateNote(id: string) {
-    try {
-      fetch(`http://localhost:3000/api/notes/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "PUT",
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   const handleSubmit = async (data: FormData) => {
     try {
       create(data);
+      setSelected(false)
     } catch (error) {
       console.log(error);
+      setSelected(false)
     }
   };
+  const handleUpdate = (title:string,description:string,id:string) => {
+    setForm({
+      title,
+      description,
+      id
+    })
+    setSelected(true)
+  }
   return (
     <main
       className={`${inter.className} flex w-full gap-3 flex-col px-4 md:px-10 justify-center items-center min-h-screen`}
@@ -126,9 +129,9 @@ export default function Home({ notes }: Notes) {
         {error && <div className="text-red-500 text-sm">{error}</div>}
         <button
           type="submit"
-          className="w-72 bg-blue-800 hover:bg-blue-900 flex items-center justify-center p-2 rounded"
+          className={`w-72 ${selected?"bg-green-600 text-black hover:bg-green-700":"bg-blue-800 text-white hover:bg-blue-900"} flex items-center justify-center p-2 rounded`}
         >
-          Save
+          {selected?"Save":"Create"}
         </button>
       </form>
       <div className="flex flex-col w-72 pt-5 gap-4 items-center">
@@ -154,11 +157,7 @@ export default function Home({ notes }: Notes) {
                 </button>
                 <button
                   onClick={() =>
-                    setForm({
-                      title: note.title,
-                      description: note.description,
-                      id: note.id,
-                    })
+                    {handleUpdate(note.description,note.title,note.id)}
                   }
                   className="bg-blue-500 hover:bg-blue-700 text-white text-2xl p-1 rounded"
                 >
