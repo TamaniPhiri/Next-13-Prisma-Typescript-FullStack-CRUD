@@ -15,6 +15,28 @@ export default function Home() {
     description: "",
     id: "",
   });
+
+  async function create(data: FormData){
+    try {
+      fetch('http://localhost:3000/api/create',{
+        body: JSON.stringify(data),
+        headers:{
+          'Content-Type': 'application/json'
+        },
+        method:'POST'
+      }).then(()=>setForm({title:"", description:"",id:""}))
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleSubmit=async(data:FormData)=>{
+    try {
+      create(data)
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <main
       className={`${inter.className} flex w-full gap-3 flex-col px-4 md:px-10 justify-center items-center min-h-screen`}
