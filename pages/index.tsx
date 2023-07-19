@@ -33,6 +33,9 @@ export default function Home({ notes }: Notes) {
   };
 
   async function create(data: FormData) {
+    if(data.description===""||data.title===""){
+      return alert("Please fill in the fields")
+    }
     try {
       fetch("http://localhost:3000/api/create", {
         body: JSON.stringify(data),
@@ -41,8 +44,29 @@ export default function Home({ notes }: Notes) {
         },
         method: "POST",
       }).then(() => {
-        setForm({ title: "", description: "", id: "" });
+        if (data.id) {
+          deleteNote(data.id);
+          setForm({ title: "", description: "", id: "" });
+          refreshData();
+        }
+        else{
+          setForm({ title: "", description: "", id:""});
+          refreshData();
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function deleteNote(id: string) {
+    try {
+      fetch(`http://localhost:3000/api/note/${id}`, {
+        headers: { "Content-Type": "application/json" },
+        method: "DELETE",
+      }).then(() => {
         refreshData();
+        console.log("Successfully deleted note");
       });
     } catch (error) {
       console.log(error);
@@ -94,6 +118,26 @@ export default function Home({ notes }: Notes) {
             <div key={note.id} className="flex w-full border-b flex-col gap-2">
               <span className="font-bold">{note.title}</span>
               <p className="font-bold text-gray-400">{note.description}</p>
+              <div className="flex w-full justify-end items-center">
+                <button
+                  onClick={() => deleteNote(note.id)}
+                  className="bg-red-500 text-white p-1 rounded"
+                >
+                  delete
+                </button>
+                <button
+                  onClick={() =>
+                    setForm({
+                      title: note.title,
+                      description: note.description,
+                      id: note.id,
+                    })
+                  }
+                  className="bg-blue-500 text-white p-1 rounded"
+                >
+                  update
+                </button>
+              </div>
             </div>
           );
         })}
