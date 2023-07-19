@@ -45,6 +45,7 @@ export default function Home() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          handleSubmit(form);
         }}
         className="flex flex-col items-center gap-2"
       >
