@@ -22,6 +22,7 @@ interface Notes {
 
 export default function Home({ notes }: Notes) {
   const router = useRouter();
+  const[error,setError]=useState("")
   const [form, setForm] = useState<FormData>({
     title: "",
     description: "",
@@ -34,7 +35,7 @@ export default function Home({ notes }: Notes) {
 
   async function create(data: FormData) {
     if(data.description===""||data.title===""){
-      return alert("Please fill in the fields")
+      return setError("Fill in the missing fields")
     }
     try {
       fetch("http://localhost:3000/api/create", {
@@ -97,14 +98,21 @@ export default function Home({ notes }: Notes) {
           className="p-2 rounded-md w-72 bg-gray-800"
           placeholder="Title"
           value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          onChange={(e) =>{
+            setError("")
+            setForm({ ...form, title: e.target.value })
+          }}
         />
         <textarea
           className="p-2 rounded-md w-72 bg-gray-800"
           placeholder="Description"
           value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
+          onChange={(e) =>{
+            setError("")
+            setForm({ ...form, description: e.target.value })
+          }}
         />
+        {error&&<div className="text-red-500 text-sm">{error}</div>}
         <button
           type="submit"
           className="w-72 bg-blue-800 hover:bg-blue-900 flex items-center justify-center p-2 rounded"
