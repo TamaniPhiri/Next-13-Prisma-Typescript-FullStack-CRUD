@@ -22,7 +22,7 @@ interface Notes {
 
 export default function Home({ notes }: Notes) {
   const router = useRouter();
-  const[error,setError]=useState("")
+  const [error, setError] = useState("");
   const [form, setForm] = useState<FormData>({
     title: "",
     description: "",
@@ -34,8 +34,8 @@ export default function Home({ notes }: Notes) {
   };
 
   async function create(data: FormData) {
-    if(data.description===""||data.title===""){
-      return setError("Fill in the missing fields")
+    if (data.description === "" || data.title === "") {
+      return setError("Fill in the missing fields");
     }
     try {
       fetch("http://localhost:3000/api/create", {
@@ -49,9 +49,8 @@ export default function Home({ notes }: Notes) {
           deleteNote(data.id);
           setForm({ title: "", description: "", id: "" });
           refreshData();
-        }
-        else{
-          setForm({ title: "", description: "", id:""});
+        } else {
+          setForm({ title: "", description: "", id: "" });
           refreshData();
         }
       });
@@ -68,6 +67,18 @@ export default function Home({ notes }: Notes) {
       }).then(() => {
         refreshData();
         console.log("Successfully deleted note");
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function updateNote(id: string) {
+    try {
+      fetch(`http://localhost:3000/api/notes/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
       });
     } catch (error) {
       console.log(error);
@@ -98,21 +109,21 @@ export default function Home({ notes }: Notes) {
           className="p-2 rounded-md w-72 bg-gray-800"
           placeholder="Title"
           value={form.title}
-          onChange={(e) =>{
-            setError("")
-            setForm({ ...form, title: e.target.value })
+          onChange={(e) => {
+            setError("");
+            setForm({ ...form, title: e.target.value });
           }}
         />
         <textarea
           className="p-2 rounded-md w-72 bg-gray-800"
           placeholder="Description"
           value={form.description}
-          onChange={(e) =>{
-            setError("")
-            setForm({ ...form, description: e.target.value })
+          onChange={(e) => {
+            setError("");
+            setForm({ ...form, description: e.target.value });
           }}
         />
-        {error&&<div className="text-red-500 text-sm">{error}</div>}
+        {error && <div className="text-red-500 text-sm">{error}</div>}
         <button
           type="submit"
           className="w-72 bg-blue-800 hover:bg-blue-900 flex items-center justify-center p-2 rounded"
@@ -123,15 +134,23 @@ export default function Home({ notes }: Notes) {
       <div className="flex flex-col w-72 pt-5 gap-4 items-center">
         {notes.map((note) => {
           return (
-            <div key={note.id} className="flex w-full border-b flex-col gap-2">
+            <div key={note.id} className="flex w-full flex-col gap-2">
               <span className="font-bold">{note.title}</span>
-              <p className="font-bold text-gray-400">{note.description}</p>
-              <div className="flex w-full justify-end items-center">
+              <p className="font-bold border-b text-gray-400">{note.description}</p>
+              <div className="flex w-full justify-end gap-2 items-center">
                 <button
                   onClick={() => deleteNote(note.id)}
-                  className="bg-red-500 text-white p-1 rounded"
+                  className="bg-red-500 hover:bg-red-700 text-white text-2xl p-1 rounded"
                 >
-                  delete
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    height="1em"
+                    width="1em"
+                  >
+                    <path fill="none" d="M0 0h24v24H0z" />
+                    <path d="M20 7v14a1 1 0 01-1 1H5a1 1 0 01-1-1V7H2V5h20v2h-2zM6 7v13h12V7H6zm1-5h10v2H7V2zm4 8h2v7h-2v-7z" />
+                  </svg>
                 </button>
                 <button
                   onClick={() =>
@@ -141,9 +160,16 @@ export default function Home({ notes }: Notes) {
                       id: note.id,
                     })
                   }
-                  className="bg-blue-500 text-white p-1 rounded"
+                  className="bg-blue-500 hover:bg-blue-700 text-white text-2xl p-1 rounded"
                 >
-                  update
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    height="1em"
+                    width="1em"
+                  >
+                    <path d="M19.045 7.401c.378-.378.586-.88.586-1.414s-.208-1.036-.586-1.414l-1.586-1.586c-.378-.378-.88-.586-1.414-.586s-1.036.208-1.413.585L4 13.585V18h4.413L19.045 7.401zm-3-3l1.587 1.585-1.59 1.584-1.586-1.585 1.589-1.584zM6 16v-1.585l7.04-7.018 1.586 1.586L7.587 16H6zm-2 4h16v2H4z" />
+                  </svg>
                 </button>
               </div>
             </div>
