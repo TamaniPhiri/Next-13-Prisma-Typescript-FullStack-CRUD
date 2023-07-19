@@ -2,6 +2,7 @@ import { GetServerSideProps } from "next";
 import { Epilogue } from "next/font/google";
 import { useState } from "react";
 import { prisma } from "@/lib/prisma";
+import { useRouter } from "next/router";
 
 const inter = Epilogue({ subsets: ["latin"] });
 
@@ -20,11 +21,16 @@ interface Notes{
 }
 
 export default function Home({notes}:Notes) {
+  const router=useRouter()
   const [form, setForm] = useState<FormData>({
     title: "",
     description: "",
     id: "",
   });
+
+  const refreshData =()=>{
+    router.replace(router.asPath)
+  }
 
   async function create(data: FormData){
     try {
@@ -34,7 +40,10 @@ export default function Home({notes}:Notes) {
           'Content-Type': 'application/json'
         },
         method:'POST'
-      }).then(()=>setForm({title:"", description:"",id:""}))
+      }).then(()=>{
+        setForm({title:"", description:"",id:""})
+        refreshData()
+      })
     } catch (error) {
       console.log(error);
     }
